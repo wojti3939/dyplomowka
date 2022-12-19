@@ -1,19 +1,20 @@
 import cv2
 import numpy as np
 
-# min, min upper left
-# max, max lower right
 
 class Tile:
-    def __init__(self, p1, p2, p3, p4, piece, color):
-        self.p1 = p1
-        self.p2 = p2
-        self.p3 = p3
-        self.p4 = p4
-        self.piece = piece
-        self.color = color
+    def __init__(self, p1, p2, p3, p4, pieceID):
+        self.p1 = p1 # top left corner
+        self.p2 = p2 # top right corner
+        self.p3 = p3 # bottom left corner
+        self.p4 = p4 # bottom right corner
+        self.pieceID = pieceID # piece ID for example 'A8', 'G3'
 
-class Corner:
+Tile = {
+
+}
+
+class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
@@ -24,10 +25,15 @@ class Corner:
     __repr__ = __str__
 
 
+def draw_corners(corner_chunks, frame, color=(0, 0, 255), text_offset = 2):
+    for i, chunk in enumerate(corner_chunks):
+        for j, corner in enumerate(chunk):
+            x, y = int(corner.x), int(corner.y)
+            cv2.circle(frame, (x, y), radius=1, color=color, thickness=3)
+            cv2.putText(frame, f"{j},{i}", (x + text_offset, y), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 0, 255), thickness=1)
+
+
 def boarddetection(frame):
-
-
-    # gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # The function attempts to determine whether the input image is a view of the chessboard pattern
     # and locate the internal chessboard corners.
@@ -36,26 +42,50 @@ def boarddetection(frame):
                                                 cv2.CALIB_CB_FAST_CHECK +
                                                 cv2.CALIB_CB_NORMALIZE_IMAGE)
 
-    # Creating list of tupples with detected coordinates
-    TmpListToSort = []
-
-    corners = [Corner(item[0][0], item[0][1]) for item in corners]
-    corners.sort(key=lambda corner: corner.x)
+    # creating list of (x,y) points
+    # sorting to organize points into chunks
+    # each chunk represents 7 points in horizontal orientation
+    # starting from top to bottom
+    corners = [Point(item[0][0], item[0][1]) for item in corners]
+    corners.sort(key=lambda corner: corner.y)
 
     corner_chunks = [corners[0:7], corners[7:14], corners[14:21], corners[21:28], corners[28:35], corners[35:42], corners[42:49]]
 
     for chunk in corner_chunks:
-        chunk.sort(key=lambda corner: corner.y)
+        chunk.sort(key=lambda corner: corner.x)
 
+    # filling all corners with vector movement
+    fillToTopChunk = [Point(firstH.x, 2*firstH.y - secondH.y) for firstH, secondH in zip(corner_chunks[0], corner_chunks[1])]
+    fillToBottomChunk = [Point(eighthH.x, 2*eighthH.y - seventhH.y) for seventhH, eighthH in zip(corner_chunks[-2], corner_chunks[-1])]
+
+    corner_chunks.insert(0, fillToTopChunk)
+    corner_chunks.append(fillToBottomChunk)
+
+    for chunk in corner_chunks:
+        secondV, thirdV = chunk[0:2]
+        fillToLeftChunk = Point(2*secondV.x - thirdV.x,secondV.y)
+        chunk.insert(0, fillToLeftChunk)
+
+    for chunk in corner_chunks:
+        seventhV, eighthV = chunk[6:8]
+        fillToRightChunk = Point(2*eighthV.x - seventhV.x,seventhV.y)
+        chunk.append(fillToRightChunk)
+
+
+    for chunk in corner_chunks:
+        chessboard = [Tile()]
+        # print("***", chunk[0])
+    # print("********: ", corner_chunks)
 
     if is_ret:
+
+        draw_corners(corner_chunks, frame)
         # print("corners " + str(corners))
-        fnl = cv2.drawChessboardCorners(frame, (7, 7), corners[0], is_ret)
+        # fnl = cv2.drawChessboardCorners(frame, (7, 7), corners, is_ret)
         # cv2.imshow("fnl", fnl)
-        # cv2.waitKey(0) # Stop frame when chessboard found
+        cv2.waitKey(0) # Stop frame when chessboard found
     else:
         print("No Checkerboard Found")
-    # 311,257     277, 223
-    # cv2.circle(frame, (295,361), radius=5, color=(0, 0, 255), thickness=5)
-    # cv2.circle(frame, (329, 361), radius=5, color=(0, 0, 0), thickness=5)
 
+    cv2.circle(frame, (137, 338), radius=3, color=(0,0,0), thickness=3)
+    cv2.circle(frame, (137, 373), radius=3, color=(0, 0, 0), thickness=3)
