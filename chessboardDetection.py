@@ -1,15 +1,13 @@
 import cv2
-# from dictionary import Tiles
 
 
 class Tile:
-    def __init__(self, p1, p2, p3, p4, pieceID):
+    def __init__(self, p1, p2, p3, p4, tile_id):
         self.p1 = p1 # top left corner
         self.p2 = p2 # top right corner
         self.p3 = p3 # bottom right corner
         self.p4 = p4 # bottom left corner
-        self.pieceID = pieceID # piece ID for example 'A8', 'G3'
-
+        self.tile_id = tile_id # piece ID for example 'A8', 'G3'
 
 
 class Point:
@@ -20,8 +18,9 @@ class Point:
     def __str__(self):
         return f"x: {self.x} y: {self.y}"
 
-    __repr__ = __str__
+    # __repr__ = __str__
 
+tiles = []
 
 def draw_corners(corner_chunks, frame, color=(0, 0, 255), text_offset = 2):
     for i, chunk in enumerate(corner_chunks):
@@ -34,7 +33,7 @@ def draw_corners(corner_chunks, frame, color=(0, 0, 255), text_offset = 2):
 def draw_tile(frame, tile, p1, p2, p3, p4, color=(0, 0, 255)):
     cv2.rectangle(frame, (int(p1.x), int(p1.y)), (int(p3.x), int(p3.y)), color)
 
-    cv2.putText(frame, tile.pieceID, (int((p4.x + p4.x + p3.x) / 3), int((p2.y + p3.y) / 2)), cv2.FONT_HERSHEY_SIMPLEX,
+    cv2.putText(frame, tile.tile_id, (int((p4.x + p4.x + p3.x) / 3), int((p2.y + p3.y) / 2)), cv2.FONT_HERSHEY_SIMPLEX,
                 0.3, color, thickness=1)
 
 
@@ -84,7 +83,7 @@ def boarddetection(frame):
     row_ids = "87654321"
     column_ids = "ABCDEFGH"
 
-    tiles = []
+
     for i in range(8):
         for j in range(8):
             p1 = corner_chunks[i][j]
@@ -96,6 +95,7 @@ def boarddetection(frame):
             column_id = column_ids[j]
             tile = Tile(p1, p2, p3, p4, f"{column_id}{row_id}")
             tiles.append(tile)
+            # print("###", tiles[0].tile_id)
             # draw_tile(frame, tile, p1, p2, p3, p4)
 
     # print("corners " + str(corners))

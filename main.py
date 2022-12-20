@@ -1,6 +1,7 @@
 import cv2
 import chessboardDetection
 import pieceDetection
+import fusion_iou
 cap = cv2.VideoCapture(0)
 if not cap.isOpened():
     print("Cannot open camera")
@@ -15,7 +16,7 @@ while True:
         break
 
     chessboardDetection.boarddetection(frame)
-    pieceDetection.piecedetection(frame)
+    pieceDetection.piece_detection(frame)
 
     # Display the resulting frame
     cv2.imshow('frame', frame)
