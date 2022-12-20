@@ -31,7 +31,11 @@ def draw_corners(corner_chunks, frame, color=(0, 0, 255), text_offset = 2):
             cv2.putText(frame, f"{j},{i}", (x + text_offset, y), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 0, 255), thickness=1)
 
 
-# def draw_tile(color=):
+def draw_tile(frame, tile, p1, p2, p3, p4, color=(0, 0, 255)):
+    cv2.rectangle(frame, (int(p1.x), int(p1.y)), (int(p3.x), int(p3.y)), color)
+
+    cv2.putText(frame, tile.pieceID, (int((p4.x + p4.x + p3.x) / 3), int((p2.y + p3.y) / 2)), cv2.FONT_HERSHEY_SIMPLEX,
+                0.3, color, thickness=1)
 
 
 def boarddetection(frame):
@@ -42,6 +46,11 @@ def boarddetection(frame):
                                                 flags=cv2.CALIB_CB_ADAPTIVE_THRESH +
                                                 cv2.CALIB_CB_FAST_CHECK +
                                                 cv2.CALIB_CB_NORMALIZE_IMAGE)
+
+
+    if not is_ret:
+        print("No Checkerboard Found")
+        return
 
     # creating list of (x,y) points
     # sorting to organize points into chunks
@@ -82,21 +91,17 @@ def boarddetection(frame):
             p2 = corner_chunks[i][j+1]
             p3 = corner_chunks[i+1][j+1]
             p4 = corner_chunks[i+1][j]
+
             row_id = row_ids[i]
             column_id = column_ids[j]
-            tile = Tile(p1, p2, p3, p4, f"{row_id}{column_id}")
+            tile = Tile(p1, p2, p3, p4, f"{column_id}{row_id}")
             tiles.append(tile)
-            cv2.rectangle(frame, p1, p3, (0, 0, 255))
+            draw_tile(frame, tile, p1, p2, p3, p4)
 
-    if is_ret:
-
-        draw_corners(corner_chunks, frame)
-        # print("corners " + str(corners))
-        # fnl = cv2.drawChessboardCorners(frame, (7, 7), corners, is_ret)
-        # cv2.imshow("fnl", fnl)
-        cv2.waitKey(0) # Stop frame when chessboard found
-    else:
-        print("No Checkerboard Found")
-
-    cv2.circle(frame, (137, 338), radius=3, color=(0,0,0), thickness=3)
-    cv2.circle(frame, (137, 373), radius=3, color=(0, 0, 0), thickness=3)
+    # print("corners " + str(corners))
+    # fnl = cv2.drawChessboardCorners(frame, (7, 7), corners, is_ret)
+    # cv2.imshow("fnl", fnl)
+    # cv2.waitKey(0) # Stop frame when chessboard found
+    draw_corners(corner_chunks, frame)
+    # cv2.circle(frame, (137, 338), radius=3, color=(0,0,0), thickness=3)
+    # cv2.circle(frame, (137, 373), radius=3, color=(0, 0, 0), thickness=3)
