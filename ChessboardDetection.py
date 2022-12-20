@@ -1,18 +1,16 @@
 import cv2
-import numpy as np
+# from dictionary import Tiles
 
 
 class Tile:
     def __init__(self, p1, p2, p3, p4, pieceID):
         self.p1 = p1 # top left corner
         self.p2 = p2 # top right corner
-        self.p3 = p3 # bottom left corner
-        self.p4 = p4 # bottom right corner
+        self.p3 = p3 # bottom right corner
+        self.p4 = p4 # bottom left corner
         self.pieceID = pieceID # piece ID for example 'A8', 'G3'
 
-Tile = {
 
-}
 
 class Point:
     def __init__(self, x, y):
@@ -31,6 +29,9 @@ def draw_corners(corner_chunks, frame, color=(0, 0, 255), text_offset = 2):
             x, y = int(corner.x), int(corner.y)
             cv2.circle(frame, (x, y), radius=1, color=color, thickness=3)
             cv2.putText(frame, f"{j},{i}", (x + text_offset, y), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 0, 255), thickness=1)
+
+
+# def draw_tile(color=):
 
 
 def boarddetection(frame):
@@ -71,11 +72,21 @@ def boarddetection(frame):
         fillToRightChunk = Point(2*eighthV.x - seventhV.x,seventhV.y)
         chunk.append(fillToRightChunk)
 
+    row_ids = "87654321"
+    column_ids = "ABCDEFGH"
 
-    for chunk in corner_chunks:
-        chessboard = [Tile()]
-        # print("***", chunk[0])
-    # print("********: ", corner_chunks)
+    tiles = []
+    for i in range(8):
+        for j in range(8):
+            p1 = corner_chunks[i][j]
+            p2 = corner_chunks[i][j+1]
+            p3 = corner_chunks[i+1][j+1]
+            p4 = corner_chunks[i+1][j]
+            row_id = row_ids[i]
+            column_id = column_ids[j]
+            tile = Tile(p1, p2, p3, p4, f"{row_id}{column_id}")
+            tiles.append(tile)
+            cv2.rectangle(frame, p1, p3, (0, 0, 255))
 
     if is_ret:
 
