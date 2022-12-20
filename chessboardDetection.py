@@ -18,7 +18,7 @@ class Point:
     def __str__(self):
         return f"x: {self.x} y: {self.y}"
 
-    # __repr__ = __str__
+    __repr__ = __str__
 
 tiles = []
 
@@ -30,14 +30,14 @@ def draw_corners(corner_chunks, frame, color=(0, 0, 255), text_offset = 2):
             cv2.putText(frame, f"{j},{i}", (x + text_offset, y), cv2.FONT_HERSHEY_SIMPLEX, 0.3, (0, 0, 255), thickness=1)
 
 
-def draw_tile(frame, tile, p1, p2, p3, p4, color=(0, 0, 255)):
-    cv2.rectangle(frame, (int(p1.x), int(p1.y)), (int(p3.x), int(p3.y)), color)
+# def draw_tile(frame, tile, p1, p2, p3, p4, color=(0, 255, 0)):
+#     cv2.rectangle(frame, (int(p1.x), int(p1.y)), (int(p3.x), int(p3.y)), color)
+#
+#     cv2.putText(frame, tile.tile_id, (int((p4.x + p4.x + p3.x) / 3), int((p2.y + p3.y) / 2)), cv2.FONT_HERSHEY_SIMPLEX,
+#                 0.3, color, thickness=1)
 
-    cv2.putText(frame, tile.tile_id, (int((p4.x + p4.x + p3.x) / 3), int((p2.y + p3.y) / 2)), cv2.FONT_HERSHEY_SIMPLEX,
-                0.3, color, thickness=1)
 
-
-def boarddetection(frame):
+def board_detection(frame):
 
     # The function attempts to determine whether the input image is a view of the chessboard pattern
     # and locate the internal chessboard corners.
@@ -95,13 +95,6 @@ def boarddetection(frame):
             column_id = column_ids[j]
             tile = Tile(p1, p2, p3, p4, f"{column_id}{row_id}")
             tiles.append(tile)
-            # print("###", tiles[0].tile_id)
-            # draw_tile(frame, tile, p1, p2, p3, p4)
 
-    # print("corners " + str(corners))
-    # fnl = cv2.drawChessboardCorners(frame, (7, 7), corners, is_ret)
-    # cv2.imshow("fnl", fnl)
-    # cv2.waitKey(0) # Stop frame when chessboard found
-    # draw_corners(corner_chunks, frame)
-    # cv2.circle(frame, (137, 338), radius=3, color=(0,0,0), thickness=3)
-    # cv2.circle(frame, (137, 373), radius=3, color=(0, 0, 0), thickness=3)
+    # draw_corners(corner_chunks, frame)  # Drawing points and coordinates of chessboard tiles
+
