@@ -96,12 +96,12 @@ def boarddetection(frame):
             column_id = column_ids[j]
             tile = Tile(p1, p2, p3, p4, f"{column_id}{row_id}")
             tiles.append(tile)
-            draw_tile(frame, tile, p1, p2, p3, p4)
+            # draw_tile(frame, tile, p1, p2, p3, p4)
 
     # print("corners " + str(corners))
     # fnl = cv2.drawChessboardCorners(frame, (7, 7), corners, is_ret)
     # cv2.imshow("fnl", fnl)
     # cv2.waitKey(0) # Stop frame when chessboard found
-    draw_corners(corner_chunks, frame)
+    # draw_corners(corner_chunks, frame)
     # cv2.circle(frame, (137, 338), radius=3, color=(0,0,0), thickness=3)
     # cv2.circle(frame, (137, 373), radius=3, color=(0, 0, 0), thickness=3)
