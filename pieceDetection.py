@@ -31,6 +31,7 @@ def piece_detection(frame):
     detections = preds['predictions']
 
     for box in detections:
+        # Calculating (x, y) of upper left and lower right Points
         x1 = box['x'] - box['width'] / 2
         x2 = box['x'] + box['width'] / 2
         y1 = box['y'] - box['height'] / 2
@@ -44,6 +45,7 @@ def piece_detection(frame):
 
         for tile in chessboardDetection.tiles:
             boxB = [tile.p1.x, tile.p1.y, tile.p3.x, tile.p3.y]
+            # calculating iou of tiles and figures bounding boxes
             iou = fusion_iou.bb_intersection_over_union(boxA, boxB)
             tmp = {"tile": tile.tile_id, "piece": box['class'], "iou": iou}
             if not(iou < MIN_IOU_TO_RECOGNIZE):
@@ -53,6 +55,7 @@ def piece_detection(frame):
             cv2.rectangle(frame, (int(tile.p1.x), int(tile.p1.y)), (int(tile.p3.x), int(tile.p3.y)), (0, 255, 0), 1)
 
         if (list_tmp):
+            # Appending to list most recognized piece
             list_tmp.sort(reverse=True, key=lambda tmp: tmp["iou"])
             pieces_recognized.append(list_tmp[0])
             text = list_tmp[0]['tile'] + ":" + box['class'] + ("%.2f" % box['confidence'])

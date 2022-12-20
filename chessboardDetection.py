@@ -60,10 +60,11 @@ def board_detection(frame):
 
     corner_chunks = [corners[0:7], corners[7:14], corners[14:21], corners[21:28], corners[28:35], corners[35:42], corners[42:49]]
 
+    # sorting of chunks
     for chunk in corner_chunks:
         chunk.sort(key=lambda corner: corner.x)
 
-    # filling all corners with vector movement
+    # Calculating Points of all tiles
     fillToTopChunk = [Point(firstH.x, 2*firstH.y - secondH.y) for firstH, secondH in zip(corner_chunks[0], corner_chunks[1])]
     fillToBottomChunk = [Point(eighthH.x, 2*eighthH.y - seventhH.y) for seventhH, eighthH in zip(corner_chunks[-2], corner_chunks[-1])]
 
